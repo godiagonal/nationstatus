@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+
+  <script src="https://code.jquery.com/jquery-2.2.2.min.js" integrity="sha256-36cp2Co+/62rEAAYHLmRCPIych47CvdM+uTBJwSzWjI=" crossorigin="anonymous"></script>
+
+  <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
+  <link rel="stylesheet" href="normalize.css">
+
+
+
+  <style>
+
+    /* animation */
+    .logged-in {
+      position: relative;
+      left: 100%;
+      z-index: 1000;
+
+
+
+    }
+
+    .logged-in.appended {
+      left: 0%;
+    }
+
+    /* Sections */
+
+
+    .bar {
+      display: flex;
+      align-items: center;
+      height: 15vh;
+      background: #1abc9c;
+      justify-content: space-between;
+
+
+
+
+    }
+
+    .bar.bar-top {
+      color: white;
+      font-size: 1.5em;
+      padding-left: 10px;
+
+    }
+
+    .bar-item{
+
+
+    }
+
+    .information {
+      height: calc(85vh - 70vh);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+    }
+
+    .information span  {
+      font-size: 5em;
+      margin: 10px
+
+
+    }
+
+    .login {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 85vh;
+      flex-direction: column;
+
+    }
+
+    .login input {
+      height: 5vh;
+      width: 60vw;
+      margin-bottom: 30px;
+
+    }
+
+    .login button {
+      height: 5vh;
+      width: 60vw;
+    }
+
+
+
+
+    /* Button styles */
+
+    .logout:active {
+      opacity: 0.5;
+    }
+
+    .button {
+      display: block;
+      width: 100%;
+      height: 35vh;
+      border: 0;
+
+
+      font-size: 12em;
+      color: white;
+      /*none|h-shadow v-shadow blur spread color*/
+
+
+    }
+
+    .button-increase:active {
+      background-color: #28b162;
+    }
+
+    .button-decrease:active {
+      background-color: #c0392b;
+    }
+
+    .button-increase{
+      background-color: #2ecc71;
+
+    }
+
+    .button-decrease {
+      background-color: #e74c3c;
+
+    }
+
+
+    /*Helper classes*/
+    .topMarker {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 0%;
+
+    }
+  </style>
+
+</head>
+<body>
+
+
+<!-- Logged out Section -->
+<div class="topMarker">
+  <section class="logged-out">
+    <header class="bar bar-top">
+
+      <div class="bar-item"></div>
+      <div class="bar-item"> Login </div>
+      <div class="bar-item"> </div>
+
+
+
+    </header>
+
+    <section class="login">
+      <label for="email">Email:</label>
+      <input type="email" name="email" id="email">
+      <label for="password">Password</label>
+      <input type="password" name="password" id="password">
+      <button class="login-button">Login</button>
+    </section>
+  </section>
+</div>
+
+
+
+<!-- Logged in section -->
+<div class="topMarker">
+  <section class="logged-in">
+    <header class="bar bar-top">
+
+      <div class="bar-item logout">  &lang; Logout</div>
+      <div class="bar-item"> Counter </div>
+      <div class="bar-item"> Nation </div>
+
+
+    </header>
+
+    <section class="information">
+      <span class="current-visitors">0</span>
+      <span>of</span>
+      <span class="max-visitors">0</span>
+    </section>
+
+    <section class="adjust">
+      <button class="button button-increase">+</button>
+      <button class="button button-decrease">-</button>
+
+
+
+    </section>
+
+  </section>
+
+
+</div>
+
+
+
+
+<script>
+
+  var ref = new Firebase("https://nationstatus.firebaseio.com");
+  var nationref;
+  var currentVisitors;
+  var maxVisitors;
+
+  var currentVisitorsSpan = document.getElementsByClassName("current-visitors")[0];
+  var maxVisitorsSpan = document.getElementsByClassName("max-visitors")[0];
+
+
+  //Element bidings
+  document.getElementsByClassName("button-increase")[0].addEventListener("click", increase);
+  document.getElementsByClassName("button-decrease")[0].addEventListener("click", decrease);
+  document.getElementsByClassName("logout")[0].addEventListener("click", animateLogout);
+  document.getElementsByClassName("login-button")[0].addEventListener("click", login);
+
+  function login(){
+
+
+    //Remove
+    email = document.getElementById("email").value;
+    password = document.getElementById("password").value;
+
+
+    ref.authWithPassword({
+      email    : email,
+      password : password
+    }, function(error, authData) {
+      if (error) {
+        console.log("Login Failed!", error);
+      } else {
+        nationRef = ref.child("nations/" + authData.uid);
+        nationRef.once("value", function(snapshot){
+          currentVisitors = snapshot.val().currentVisitors;
+          maxVisitors = snapshot.val().maxVisitors;
+
+          currentVisitorsSpan.innerHTML = currentVisitors;
+          maxVisitorsSpan.innerHTML = maxVisitors;
+          animateLogin();
+
+        })
+      }
+    });
+
+  }
+
+
+  function increase() {
+    console.log(currentVisitors)
+    nationRef.update({currentVisitors: (++currentVisitors)})
+    currentVisitorsSpan.innerHTML = currentVisitors;
+
+  }
+
+
+  function decrease() {
+    nationRef.update({currentVisitors: (--currentVisitors)})
+    currentVisitorsSpan.innerHTML = currentVisitors;
+
+  }
+
+  //Animation
+  function animateLogin(){
+
+    $('.logged-in').animate({
+      left: "0%"
+
+    })
+
+  }
+
+  function animateLogout(){
+
+    $('.logged-in').animate({
+      left: "100%"
+
+    })
+
+  }
+
+</script>
+
+</body>
+</html>
