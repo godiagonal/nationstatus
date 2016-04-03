@@ -4,15 +4,43 @@
 <head>
     <meta charset="UTF-8">
     <title>Something</title>
-    <link type="text/css" rel="stylesheet" href="css/main.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" type="text/css">
+    <link rel="stylesheet" type="text/css" href="normalize.css">
+    <link rel="stylesheet" type="text/css" href="main.css">
     <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
     <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDtnt1nFvcUT7JaOn5HzNuaR5xUT4ewkBk&callback=gui.initMap&libraries=geometry" async defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.20/vue.min.js"></script>
+    <script src="nation.js"></script>
+    <script src="location.js"></script>
+    <script src="gui.js"></script>
     <script src="main.js"></script>
 </head>
 
-<body>
+<body id="app">
 
-    
+    <div id="nation-map-view">
+        <div id="nation-map"></div>
+        <div id="nation-details">
+            <div class="nation {{nation.getVisitorStatus()}}" v-bind:style="{ backgroundImage: 'url(' + nation.image + ')' }">
+                <h3 class="name">{{nation.name}}</h3>
+                <div class="distance">{{nation.distance}}m away</div>
+                <div class="visitors">{{nation.currentVisitors}} out of {{nation.maxVisitors}} visitors</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="nation-list-view">
+        <div class="nation-list">
+            <div class="nation" v-for="nation in nations" transition>
+                <h3 class="name">{{nation.name}}</h3>
+                <div class="distance">800m away</div>
+                <div class="visitors">{{nation.currentVisitors}} out of {{nation.maxVisitors}} visitors</div>
+                <img class="image" v-bind="{src:nation.image}">
+            </div>
+        </div>
+    </div>
 
 </body>
 

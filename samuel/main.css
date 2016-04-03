@@ -1,0 +1,54 @@
+html,
+body {
+    height: 100%;
+}
+
+body {
+    background-color: #eee;
+    font-family: 'Open Sans', 'Sans-serif';
+    font-size: 13px;
+}
+
+#nation-map-view,
+#nation-list-view {
+    height: 100%;
+}
+
+#nation-list-view {
+    display: none;
+}
+
+#nation-map {
+    height: calc(100% - 100px);
+}
+
+#nation-details {
+    height: 100px;
+}
+
+.nation {
+    height: 80px;
+    padding: 10px;
+    border-left: 5px solid green;
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 65px;
+}
+
+.nation.almost-full {
+    border-color: orange;
+}
+
+.nation.full {
+    border-color: red;
+}
+
+.nation > .name {
+    margin: 0 0 10px 0;
+    font-weight: normal;
+}
+
+.nation > .distance {
+    margin-bottom: 5px;
+}
+
